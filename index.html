@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FakeGuard — Instagram Fake Profile Detector</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="logo">&#9670; FakeGuard</div>
+      <div class="nav-badge">ML-Powered</div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="hero-tag">Instagram Profile Analysis</div>
+      <h1>Detect <em>fake</em><br/>profiles instantly</h1>
+      <p class="hero-sub">Enter profile data below. Our machine learning model analyzes 9 behavioral signals to classify real vs. fake accounts.</p>
+    </section>
+
+    <div class="card form-card">
+      <div class="card-header">
+        <h2>Profile Data</h2>
+        <span class="card-hint">All fields improve accuracy</span>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label for="followers">Followers</label>
+          <input type="number" id="followers" placeholder="e.g. 500" min="0" />
+        </div>
+        <div class="field">
+          <label for="following">Following</label>
+          <input type="number" id="following" placeholder="e.g. 300" min="0" />
+        </div>
+        <div class="field">
+          <label for="posts">Posts Count</label>
+          <input type="number" id="posts" placeholder="e.g. 45" min="0" />
+        </div>
+        <div class="field">
+          <label for="bio">Bio Length <span class="field-unit">(chars)</span></label>
+          <input type="number" id="bio" placeholder="e.g. 80" min="0" />
+        </div>
+        <div class="field">
+          <label for="nums">Numbers in Username</label>
+          <input type="number" id="nums" placeholder="e.g. 0" min="0" />
+        </div>
+        <div class="field">
+          <label for="namewords">Words in Full Name</label>
+          <input type="number" id="namewords" placeholder="e.g. 2" min="0" />
+        </div>
+      </div>
+
+      <div class="toggle-section">
+        <div class="toggle-label">Account properties</div>
+        <div class="toggle-grid">
+          <label class="toggle-item">
+            <input type="checkbox" id="haspic" />
+            <span class="toggle-box"></span>
+            <span>Has profile picture</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="isprivate" />
+            <span class="toggle-box"></span>
+            <span>Account is private</span>
+          </label>
+          <label class="toggle-item">
+            <input type="checkbox" id="hasurl" />
+            <span class="toggle-box"></span>
+            <span>URL in bio</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <span id="form-error" class="error-msg" style="display:none">Please fill in followers, following and posts.</span>
+        <button class="btn-analyze" onclick="analyze()">Analyze Profile &#8599;</button>
+      </div>
+    </div>
+
+    <div class="card result-card" id="result" style="display:none">
+      <div class="result-top">
+        <div>
+          <div class="result-label">Verdict</div>
+          <div class="result-verdict" id="verdict-text"></div>
+        </div>
+        <div class="verdict-badge" id="verdict-badge"></div>
+      </div>
+
+      <div class="risk-wrap">
+        <div class="risk-row">
+          <span>Fake probability score</span>
+          <strong id="risk-pct-label">0%</strong>
+        </div>
+        <div class="risk-track">
+          <div class="risk-fill" id="risk-bar" style="width:0%"></div>
+        </div>
+        <div class="risk-scale">
+          <span>Low risk</span><span>Medium</span><span>High risk</span>
+        </div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="metric">
+          <div class="metric-num" id="m-ratio">—</div>
+          <div class="metric-lbl">Follower ratio</div>
+        </div>
+        <div class="metric-sep"></div>
+        <div class="metric">
+          <div class="metric-num" id="m-posts">—</div>
+          <div class="metric-lbl">Posts</div>
+        </div>
+        <div class="metric-sep"></div>
+        <div class="metric">
+          <div class="metric-num" id="m-conf">—</div>
+          <div class="metric-lbl">Confidence</div>
+        </div>
+      </div>
+
+      <div class="signals-wrap">
+        <div class="signals-head">Signal breakdown</div>
+        <div class="signals-grid" id="signals"></div>
+      </div>
+    </div>
+
+    <section class="how-section">
+      <h2>How it works</h2>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-num">01</div>
+          <div class="how-title">Input profile data</div>
+          <div class="how-desc">Enter follower counts, bio length, username patterns and privacy settings.</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num">02</div>
+          <div class="how-title">Feature extraction</div>
+          <div class="how-desc">9 behavioral signals are extracted and normalized for the classifier.</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num">03</div>
+          <div class="how-title">ML classification</div>
+          <div class="how-desc">Random Forest model trained on 700+ labeled Instagram profiles.</div>
+        </div>
+        <div class="how-card">
+          <div class="how-num">04</div>
+          <div class="how-title">Risk verdict</div>
+          <div class="how-desc">Score and signal breakdown returned with a confidence percentage.</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>FakeGuard &mdash; Built with Python, Flask &amp; Scikit-learn &nbsp;&#9670;&nbsp; Deployed on Vercel</p>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
